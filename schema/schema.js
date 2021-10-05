@@ -10,17 +10,7 @@ const {
   GraphQLList
 } = graphql;
 
-var books = [
-  { name: "Name of the Wind", genre: "Fantasy", id: "1", authorId: "2" },
-  { name: "The Final Empire", genre: "Fantasy", id: "2", authorId: "2" },
-  { name: "The Long Earth", genre: "Sci-Fi", id: "3", authorId: "3" },
-];
 
-var authors = [
-  { name: "Name", age: 1, id: "1"},
-  { name: "The", age: "1323232", id: "2" },
-  { name: "hi", age: "Sci-Fi", id: "3" },
-];
 
 const BookType = new GraphQLObjectType({
   name: "Book",
@@ -92,10 +82,6 @@ const RootQuery = new GraphQLObjectType({
   },
 });
 
-//  book(id:"2"){
-//     name
-//     genre
-// }
 
 module.exports = new GraphQLSchema({
   query: RootQuery,
