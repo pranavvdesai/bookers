@@ -4,9 +4,12 @@ const schema = require('./schema/schema');
 const mongoose = require('mongoose');
 const dotenv = require('dotenv');
 dotenv.config();
+const cors = require('cors');
 
 const app = express();
 
+// allow cross-origin requests
+app.use(cors());
 
 mongoose.connect(process.env.DB_USER , {useNewUrlParser: true});
 
