@@ -1,42 +1,55 @@
 import React from 'react'
-import {gql} from "@apollo/client"
 import { graphql } from '@apollo/client/react/hoc';
+import {getAuthorsQuery} from '../../queries/queries';
+import {addBooksmutation} from '../../queries/queries';
+import {flowRight as compose} from 'lodash';
+import {getBooksQuery} from '../../queries/queries';
 
-const getAuthorsQuery = gql`
-    {
-        authors{
-            name
-            id
-        }
+
+function AddBook(/*{data}*/ {getAuthorsQuery, addBooksmutation}) {
+
+    const [name, setName] = React.useState('');
+    const [genre, setGenre] = React.useState('');
+    const [authorId, setAuthorId] = React.useState('');
+
+    const SubmitForm = (e) => {
+        e.preventDefault();
+        addBooksmutation({
+            variables: {
+                name,
+                genre,
+                authorId
+            },
+            // array of different queries to fetch
+            refetchQueries: [{query: getBooksQuery}]
+        })
     }
-`
 
-
-function AddBook({data}) {
+    
     var displayAuthors = () => {
-    if(data.loading) {
+    if(getAuthorsQuery.loading) {
         return <div>Loading Authors...</div>
     } else {
         return (
-                    data.authors.map(Author => (
+                    getAuthorsQuery.authors.map(Author => (
                         <option key={Author.id} value={Author.id}>{Author.name}</option>
                     ))
         )
     }}
     return (
 
-        <form id="add-book">
+        <form id="add-book" onSubmit={SubmitForm} >
                 <div className="field">
                     <label>Book name:</label>
-                    <input type="text" />
+                    <input type="text" onChange={(e)=>setName(e.target.value)}/>
                 </div>
                 <div className="field">
                     <label>Genre:</label>
-                    <input type="text" />
+                    <input type="text" onChange={(e)=>setGenre(e.target.value)}  />
                 </div>
                 <div className="field">
                     <label>Author:</label>
-                    <select>
+                    <select onChange={(e)=>{setAuthorId(e.target.value)}}>
                         <option>Select author</option>
                         {displayAuthors()}
                     </select>
@@ -48,4 +61,10 @@ function AddBook({data}) {
 }
 
 // binds the query to the react component and returns props
-export default graphql(getAuthorsQuery)(AddBook)
+// export default graphql(getAuthorsQuery)(AddBook)
+
+
+export default compose(
+    graphql(getAuthorsQuery, {name: "getAuthorsQuery"}),
+    graphql(addBooksmutation, {name: "addBooksmutation"})
+)(AddBook)
